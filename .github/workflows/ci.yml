@@ -27,13 +27,14 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Download dataset from DagsHub
+- name: Download dataset from DagsHub
         run: |
           mkdir -p data
-          curl -u "${{ secrets.DAGSHUB_USERNAME }}:${{ secrets.DAGSHUB_TOKEN }}" \
-            "https://dagshub.com/Mouad-Dach/churn-cml-dvc.dvc/raw/7321aa9a1e24a9e139f42124f736b415" \
+          curl -L \
+            -u "${{ secrets.DAGSHUB_USERNAME }}:${{ secrets.DAGSHUB_TOKEN }}" \
+            "https://dagshub.com/Mouad-Dach/churn-cml-dvc.dvc/raw/files/md5/73/21aa9a1e24a9e139f42124f736b415" \
             -o data/dataset.csv
-          echo "Dataset size:"
+          head -2 data/dataset.csv
           wc -l data/dataset.csv
 
       - name: Train model

@@ -27,8 +27,16 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          
+          # ✅ Versions compatibles pour éviter les conflits
+          pip install dvc-objects==0.15.1
+          pip install dvc-data==0.51.0
+          pip install dvc==2.57.2
           pip install dvc[dags_hub]
+          
+          pip install -r requirements.txt
+          
+          dvc --version
 
       - name: Configure DVC Remote
         run: |

@@ -27,15 +27,14 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Get dataset from DagsHub
+      - name: Download dataset from DagsHub
         run: |
           mkdir -p data
-          pip install dvc dvc-http
-          dvc remote modify myremote --local auth basic
-          dvc remote modify myremote --local user ${{ secrets.DAGSHUB_USERNAME }}
-          dvc remote modify myremote --local password ${{ secrets.DAGSHUB_TOKEN }}
-          dvc pull -v || true
-          ls -la data/
+          curl -u "${{ secrets.DAGSHUB_USERNAME }}:${{ secrets.DAGSHUB_TOKEN }}" \
+            "https://dagshub.com/Mouad-Dach/churn-cml-dvc.dvc/raw/7321aa9a1e24a9e139f42124f736b415" \
+            -o data/dataset.csv
+          echo "Dataset size:"
+          wc -l data/dataset.csv
 
       - name: Train model
         run: python script.py

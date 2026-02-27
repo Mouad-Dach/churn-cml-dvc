@@ -1,0 +1,52 @@
+name: churn-imbalanced-dataset
+
+on: [push]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Set up CML
+        uses: iterative/setup-cml@v2
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Debug fichiers
+        run: |
+          pwd
+          ls -la
+          ls -la data/ || echo "data/ introuvable"
+
+      - name: Train model
+        run: python script.py
+
+      - name: Publish CML report
+        env:
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "## Rapport MLOps - Churn Detection" > report.md
+          echo "" >> report.md
+          echo "### Metriques F1-Score" >> report.md
+          echo '```' >> report.md
+          cat metrics.txt >> report.md
+          echo '```' >> report.md
+          echo "" >> report.md
+          echo "### Matrice de Confusion" >> report.md
+          echo "![Confusion Matrix](./conf_matrix.png)" >> report.md
+          cml comment create report.md

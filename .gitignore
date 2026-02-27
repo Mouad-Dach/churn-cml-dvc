@@ -1,0 +1,24 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+
+# PyCharm
+.idea/
+
+# Data — géré par DVC
+data/dataset.csv
+
+# Models — géré par DVC
+models/
+*.pkl
+
+# Outputs CI
+conf_matrix.png
+metrics.txt
+report.md
+
+# DVC local
+.dvc/cache/
+.dvc/tmp/
+.dvc/config.local

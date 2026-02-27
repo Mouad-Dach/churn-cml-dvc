@@ -27,6 +27,15 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Download Dataset
+        env:
+          DAGSHUB_USERNAME: ${{ secrets.DAGSHUB_USERNAME }}
+          DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
+        run: |
+          curl -L -u "${DAGSHUB_USERNAME}:${DAGSHUB_TOKEN}" \
+            "https://dagshub.com/Mouad-Dach/churn-cml-dvc/raw/main/data/dataset.csv" \
+            -o "data/dataset.csv"
+
       - name: Train model
         run: python script.py
 
@@ -35,12 +44,10 @@ jobs:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "## Rapport MLOps - Churn Detection" > report.md
-          echo "" >> report.md
           echo "### Metriques F1-Score" >> report.md
           echo '```' >> report.md
           cat metrics.txt >> report.md
           echo '```' >> report.md
-          echo "" >> report.md
           echo "### Matrice de Confusion" >> report.md
           echo "![Confusion Matrix](./conf_matrix.png)" >> report.md
           cml comment create report.md

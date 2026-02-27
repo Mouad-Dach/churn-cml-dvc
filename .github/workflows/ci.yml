@@ -26,15 +26,20 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install dagshub
 
       - name: Download Dataset
         env:
           DAGSHUB_USERNAME: ${{ secrets.DAGSHUB_USERNAME }}
           DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
         run: |
-          curl -L -u "${DAGSHUB_USERNAME}:${DAGSHUB_TOKEN}" \
-            "https://dagshub.com/Mouad-Dach/churn-cml-dvc/raw/main/data/dataset.csv" \
-            -o "data/dataset.csv"
+          mkdir -p data
+          python -c "
+import os, dagshub
+dagshub.init(repo_owner='Mouad-Dach', repo_name='churn-cml-dvc', auth=(os.environ['DAGSHUB_USERNAME'], os.environ['DAGSHUB_TOKEN']))
+dagshub.get_repo('Mouad-Dach/churn-cml-dvc').download_file('dataset.csv', 'data/dataset.csv')
+print('✅ Downloaded')
+"
 
       - name: Train model
         run: python script.py

@@ -27,16 +27,21 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Debug fichiers
+      - name: Get dataset from DagsHub
         run: |
-          pwd
-          ls -la
-          ls -la data/ || echo "data/ introuvable"
+          mkdir -p data
+          pip install dvc dvc-http
+          dvc remote modify myremote --local auth basic
+          dvc remote modify myremote --local user ${{ secrets.DAGSHUB_USERNAME }}
+          dvc remote modify myremote --local password ${{ secrets.DAGSHUB_TOKEN }}
+          dvc pull -v || true
+          ls -la data/
 
       - name: Train model
         run: python script.py
 
       - name: Publish CML report
+        if: always()
         env:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |

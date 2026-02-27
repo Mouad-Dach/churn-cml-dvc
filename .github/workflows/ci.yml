@@ -31,10 +31,10 @@ jobs:
         run: |
           mkdir -p data
           curl -L \
-            -u "${{ secrets.DAGSHUB_USERNAME }}:${{ secrets.DAGSHUB_TOKEN }}" \
+            -H "Authorization: Basic $(echo -n '${{ secrets.DAGSHUB_USERNAME }}:${{ secrets.DAGSHUB_TOKEN }}' | base64)" \
             "https://dagshub.com/Mouad-Dach/churn-cml-dvc.dvc/raw/files/md5/73/21aa9a1e24a9e139f42124f736b415" \
             -o data/dataset.csv
-          head -2 data/dataset.csv
+          head -1 data/dataset.csv
           wc -l data/dataset.csv
 
       - name: Train model

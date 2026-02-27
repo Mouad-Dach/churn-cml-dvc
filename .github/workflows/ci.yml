@@ -27,7 +27,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-- name: Download dataset from DagsHub
+      - name: Download dataset from DagsHub
         run: |
           mkdir -p data
           curl -L \

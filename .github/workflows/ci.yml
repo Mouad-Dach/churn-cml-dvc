@@ -27,13 +27,17 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Download dataset from DagsHub
+      - name: Pull dataset via DVC
+        env:
+          DAGSHUB_USERNAME: ${{ secrets.DAGSHUB_USERNAME }}
+          DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
         run: |
-          mkdir -p data
-          curl -L \
-            -H "Authorization: Basic $(echo -n '${{ secrets.DAGSHUB_USERNAME }}:${{ secrets.DAGSHUB_TOKEN }}' | base64)" \
-            "https://dagshub.com/Mouad-Dach/churn-cml-dvc.dvc/raw/files/md5/73/21aa9a1e24a9e139f42124f736b415" \
-            -o data/dataset.csv
+          pip install dvc==3.3.0 dvc-http==2.32.0
+          dvc remote modify myremote --local auth basic
+          dvc remote modify myremote --local user ${DAGSHUB_USERNAME}
+          dvc remote modify myremote --local password ${DAGSHUB_TOKEN}
+          dvc pull data/dataset.csv -v
+          echo "=== Verification ==="
           head -1 data/dataset.csv
           wc -l data/dataset.csv
 

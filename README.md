@@ -37,3 +37,6 @@ dvc doctor
 # find the default.json file credentials
 C:\Users\YourUsername\AppData\Local
 ```
+## Résultats
+
+Pipeline MLOps opérationnel — DVC + DagsHub + GitHub Actions + CML
